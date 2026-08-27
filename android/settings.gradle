@@ -1,4 +1,29 @@
 pluginManagement {
+    def flutterSdkPath = {
+        def properties = new Properties()
+        def localPropertiesFile = file("local.properties")
+
+        if (!localPropertiesFile.exists()) {
+            throw new GradleException(
+                "local.properties is missing. Flutter SDK path cannot be determined."
+            )
+        }
+
+        localPropertiesFile.withInputStream { properties.load(it) }
+
+        def flutterSdkPath = properties.getProperty("flutter.sdk")
+
+        if (flutterSdkPath == null || flutterSdkPath.trim().isEmpty()) {
+            throw new GradleException(
+                "flutter.sdk is not set in local.properties."
+            )
+        }
+
+        return flutterSdkPath
+    }()
+
+    includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+
     repositories {
         google()
         mavenCentral()
@@ -14,6 +39,7 @@ plugins {
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+
     repositories {
         google()
         mavenCentral()
@@ -21,14 +47,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "royal_chess"
-include ":app"
 
-def flutterSdkPath = {
-    def properties = new Properties()
-    file("local.properties").withInputStream { properties.load(it) }
-    def flutterSdkPath = properties.getProperty("flutter.sdk")
-    assert flutterSdkPath != null : "flutter.sdk not set in local.properties"
-    return flutterSdkPath
-}()
-
-includeBuild("$flutterSdkPath/packages/flutter_tools/gradle")
+include(":app")
