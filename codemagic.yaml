@@ -2,7 +2,7 @@ workflows:
   android-release:
     name: Royal Chess Android Release
     max_build_duration: 120
-    instance_type: linux_x2
+    instance_type: mac_mini_m2
 
     environment:
       flutter: 3.24.0
@@ -15,7 +15,7 @@ workflows:
           flutter --version
           test "$(flutter --version | sed -n '1p' | awk '{print $2}')" = "3.24.0"
 
-      - name: Configure Flutter SDK path
+      - name: Prepare Flutter SDK path
         script: |
           set -e
           echo "flutter.sdk=$FLUTTER_ROOT" > "$CM_BUILD_DIR/android/local.properties"
